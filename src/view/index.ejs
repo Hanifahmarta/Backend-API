@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Rebage Backend</title>
+    </head>
+    <body style="font-family: monospace; font-size: 14px">
+        <h1>Welcome to Rebage Backend</h1>
+        <p>
+            Main:
+            <br />
+            Google Auth:
+        </p>
+        <ul>
+            <li><a href="/">Homepage (this page)</a></li>
+            <br />
+            <li>
+                <a href="/auth/google"
+                    >/auth/google &mdash; Google Authentication</a
+                >
+            </li>
+            <li>
+                <a href="/protected"
+                    >/protected &mdash; Google Protected Page</a
+                >
+            </li>
+        </ul>
+        <p>User:</p>
+        <ul>
+            <li>
+                <a href="/dashboard"
+                    >/dashboard &mdash; Protected Dashboard Page</a
+                >
+            </li>
+            <li><a href="/register">/register &mdash; User register</a></li>
+            <li><a href="/login">/login &mdash; User login</a></li>
+        </ul>
+        <p>
+            Server:
+            <br />
+            Barang:
+        </p>
+        <ul>
+            <li>
+                <a href="/barang">/barang &mdash; Barang</a>
+            </li>
+            <li>
+                <a href="/barang/image"
+                    >/barang/image &mdash; Link image barang</a
+                >
+            </li>
+        </ul>
+        <p>Artikel:</p>
+        <ul>
+            <li>
+                <a href="/artikel/reduce"
+                    >/artikel/reduce &mdash; Artikel reduce</a
+                >
+            </li>
+            <li>
+                <a href="/artikel/reduce/image"
+                    >/artikel/reduce/image &mdash; Link image artikel reduce</a
+                >
+            </li>
+
+            <li>
+                <a href="/artikel/reuse"
+                    >/artikel/reuse &mdash; Artikel reuse</a
+                >
+            </li>
+            <li>
+                <a href="/artikel/reuse/image"
+                    >/artikel/reuse/image &mdash; Link image artikel reuse</a
+                >
+            </li>
+        </ul>
+
+        <p>
+            All Auth: <br />
+            Signout:
+        </p>
+        <ul>
+            <li>
+                <a href="/signout"
+                    >/signout &mdash; Signout all session (Google and
+                    Regular)</a
+                >
+            </li>
+        </ul>
+        <br />===<br />
+        <p>
+            Other:
+            <br />
+            Query directly:
+        </p>
+        <ul>
+            <li>
+                <a href="/alluser"
+                    >/alluser &mdash; Display all user in database</a
+                >
+            </li>
+            <li>
+                <a href="/deletealluser"
+                    >/deletealluser &mdash; Delete all user in database</a
+                >
+                <mark>(WARNING!)</mark>
+            </li>
+        </ul>
+    </body>
+</html>
