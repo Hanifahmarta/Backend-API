@@ -8,7 +8,7 @@ var express = require('express');
     
 
 var userroutes = require('./router/routes');
-var pool = require('./src/config/dtabase');
+var pool = require('./config/dtabase');
 // var minioClient = require('./src/config/minio');
 // var multer = require('multer');
 var app = express();
