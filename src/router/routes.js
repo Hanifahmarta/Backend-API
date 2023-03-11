@@ -6,7 +6,7 @@ const router = Router();
 router.post('/signup', controller.createuser);
 router.post('/signin', controller.loginuser);
 
-router.get('/getall', controller.getuser);
+// router.get('/getall', controller.getuser);
 // router.get('/:id', controller.getuserbyid);
 router.get('/get', controller.getusercontributor);
 
