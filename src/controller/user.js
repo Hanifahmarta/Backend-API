@@ -23,6 +23,7 @@ const createuser = (req, res) => {
     });
 };
 
+
 // Sign Up user contributor
 // const createusercontributor = (req, res) => {
 //     const { username, email, password, deaf } = req.body
@@ -60,7 +61,8 @@ const loginuser = (req, res) => {
 //     const { email, password } = req.body
 //     //check if email already exists
 
-        
+
+// ver 1
 const getuser = (req, res) => {
     pool.query('SELECT * FROM users', (error, results) => {
         if (error) throw error;
@@ -68,13 +70,39 @@ const getuser = (req, res) => {
     });
 };
 
-const getuserbyid = (req, res) => {
-    const id = parseInt(req.params.id)
-    pool.query('SELECT * FROM users WHERE id = $1', [id], (error, results) => {
-        if (error) throw error;
-        res.status(200).json(results.rows)
-    });
-};
+// const getuser = (req, res) => {
+//     pool.query('SELECT * FROM users', (error, results) => {
+//         if (error) {
+//             res.json({"status": 400, reason: error.code});
+//         } else {
+//             res.json({"status": 200, "message": "user succesfully", data: results.rows})
+//         }
+       
+//     });
+// };
+
+
+//ver 1
+// const getuserbyid = (req, res) => {
+//     const id = parseInt(req.params.id)
+//     pool.query('SELECT * FROM users WHERE id = $1', [id], (error, results) => {
+//         if (error) throw error;
+//         res.status(200).json(results.rows)
+//     });
+// };
+
+// const getuserbyid = (req, res) => {
+//     const id = parseInt(req.params.id)
+//     pool.query('SELECT * FROM users WHERE id = $1', [id], (error, results) => {
+//         if (error) {
+//             res.json({"status": 400, reason: error.code});
+//         } else {
+//             res.json({"status": 200, "message": "user succesfully", data: results.rows})
+//         }
+       
+//     });
+// };
+
 
 //Edit user
 const edituser = (req, res) => {
@@ -91,10 +119,73 @@ const edituser = (req, res) => {
 };
 
 
+// User Contributor
+// call data from 2 table
+
+//ver 1
+// const getusercontributor = (req, res) => {
+//     pool.query('SELECT users.username, user_contributor.word FROM users INNER JOIN user_contributor ON users.id = id_usercontri', (error, results) => {
+//         if (error) {
+//             res.json({"status": 400, reason: error.code});
+//         } else {
+//             res.json({"status": 200, "message": "user sukses", data: results.rows})
+//         }    
+//     });
+// };
+
+
+const getusercontributor = (req, res) => {
+    pool.query('SELECT users.username, user_contributor.word, user_contributor.video_name FROM users INNER JOIN user_contributor ON users.id = id_usercontri', (error, results) => {
+        if (error) {
+            res.json({"status": 400, reason: error.code});
+        } else {
+            res.json({"status": 200, "message": "user sukses", data: results.rows})
+        }    
+    });
+};
+
+
+const uploadvideo = (req, res) => {
+    const {video_name, word, video} = req.body
+    pool.query('INSERT INTO user_contributor (video_name, word, video) VALUES ($1, $2, $3)', [ video_name, word, video], (error, results) => {
+        if (error) throw error;
+        res.status(201).json({message: 'Video uploaded successfully', data: req.body})
+    }); 
+};
+
+
+    
+// Upload video / update video berdasarkan id
+const updatevideo = (req, res) => {
+    const { video_name } = req.body
+    const id = parseInt(req.params.id)
+    pool.query('UPDATE user_contributor SET video_name = $1 WHERE id_usercontri = $2', [video_name, id], (error, results) => {
+        if (error) throw error;
+        res.status(200).json({message: 'Video updated successfully', data: req.body})
+    });
+};
+
+// List Ranking user
+const linkrank = (req, res) => {
+    pool.query('SELECT users.username, user_contributor.word, user_contributor.video_name FROM users INNER JOIN user_contributor ON users.id = id_usercontri', (error, results) => {
+        if (error) {
+            res.json({"status": 400, reason: error.code});
+        } else {
+            res.json({"status": 200, "message": "user sukses", data: results.rows})
+        }
+    });
+};
+
+
+
 module.exports = {
     loginuser,
     createuser,
     getuser,
-    getuserbyid,
+    // getuserbyid,
     edituser,
+    getusercontributor,
+    uploadvideo,
+    updatevideo,
+    linkrank,
 };
