@@ -5,8 +5,6 @@
   "main": "server.js",
   "scripts": {
     "start-dev": "nodemon server.js",
-    //"start": "nodemon ./src/app/app.js",
-    //"test": "nodemon minio.js"
   },
   "author": "Hanifah",
   "license": "ISC",
