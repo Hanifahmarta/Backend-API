@@ -49,11 +49,22 @@ app.get('/', function(req, res) {
     res.json ({ status: "Sukses"})
 });
 
+app.get('/api/getall', function(req, res) {
+    pool.query('SELECT * FROM users', function(error, results, fields) {
+        if (error) {
+            console.log(error);
+        } else {
+            res.status(200).json({message: 'Users successfully', data: results.rows})
+        }
+    });
+});
+
+
 // User routes
 app.use('/api', userroutes); // 
 app.use('/api/signup', userroutes); // createuser
 app.use('/api/signin', userroutes); // loginuser
-app.use('/api/getall', userroutes); //getuser
+// app.use('/api/getall', userroutes); //getuser
 app.use('/api/edit/:id', userroutes); // edituser
 app.use('/api/user', userroutes); // getuserbyid
 app.use('/api/get', userroutes); // getusercontri
