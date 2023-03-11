@@ -63,12 +63,12 @@ const loginuser = (req, res) => {
 
 
 // ver 1
-// const getuser = (req, res) => {
-//    pool.query('SELECT * FROM users', (error, results) => {
-//        if (error) throw error;
- //       res.status(200).json({message: 'Users successfully', data: results.rows})
- //   });
-// };
+const getuser = (req, res) => {
+    pool.query('SELECT * FROM users', (error, results) => {
+        if (error) throw error;
+            res.status(200).json({message: 'Users successfully', data: results.rows})
+   });
+ };
 
 // const getuser = (req, res) => {
 //     pool.query('SELECT * FROM users', (error, results) => {
