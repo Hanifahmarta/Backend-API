@@ -49,15 +49,15 @@ app.get('/', function(req, res) {
     res.json ({ status: "Sukses"})
 });
 
-app.get('/api/getall', function(req, res) {
-    pool.query('SELECT * FROM users', function(error, results, fields) {
-        if (error) {
-            console.log(error);
-        } else {
-            res.status(200).json({message: 'Users successfully', data: results.rows})
-        }
-    });
-});
+// app.get('/api/getall', function(req, res) {
+//    pool.query('SELECT * FROM users', function(error, results, fields) {
+//        if (error) {
+//            console.log(error);
+//        } else {
+//            res.status(200).json({message: 'Users successfully', data: results.rows})
+//        }
+//    });
+// });
 
 
 // User routes
