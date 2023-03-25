@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # container exposed network port number
-EXPOSE 8082
+EXPOSE 3000
 
 # command to run within the container
 CMD ["npm", "start"]
