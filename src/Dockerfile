@@ -2,10 +2,10 @@
 FROM node:18.12
 
 # setting working directory
-WORKDIR /node/app
+WORKDIR /node/app/
 
 # copy package.json and package-lock.json to the container
-COPY package*.json /node/app
+COPY package*.json /node/app/
 
 # installing the depencies into the container
 RUN npm install
