@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: app-tribi
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  serviceName: "postgres"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:12
+        envFrom:
+          - configMapRef:
+              name: postgres-configuration
+        ports:
+        - containerPort: 5432
+          name: postgres
+        securityContext:
+          runAsUser: 0
+        volumeMounts:
+        - name: pv-data
+          mountPath: /var/lib/postgresql/data
+        - name: postgres-vol
+          mountPath: /etc/postgresql/pg_hba.conf
+          subPath: pg_hba.conf
+        args:
+          # - "-c"
+          # - "config_file=/etc/postgresql/postgresql.conf"
+          - "-c"
+          - "hba_file=/etc/postgresql/pg_hba.conf"
+      volumes:
+        - name: postgres-vol
+          configMap:
+            name: postgres-configuration
+        - name: pv-data
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
+---        
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv
+  labels:
+    type: local
+spec:
+  storageClassName: "longhorn"
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/postgres-pv"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pv-claim
+  namespace: app-tribi
+spec:
+  storageClassName: "longhorn"
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-configuration
+  namespace: app-tribi
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: mydb
+  POSTGRES_USER: tribi
+  POSTGRES_PASSWORD: tribiapp123
+  pg_hba.conf: |
+    # PostgreSQL Client Authentication Configuration File
+    # ===================================================
+    # IPv4 local connections:
+    local all all trust
+    host tribi_db tribi 0.0.0.0/0 trust
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: app-tribi
+  name: postgres-service
+  labels:
+    app: postgres
+spec:
+  ports:
+  - port: 5432
+    name: postgres
+  selector:
+    app: postgres
+  type: LoadBalancer
+---          
