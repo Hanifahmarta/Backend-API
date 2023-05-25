@@ -4,14 +4,24 @@ var express = require('express');
     mysql = require('mysql');
     passport = require('passport');
     http = require('http');
-    // Minio = require('minio');
-    
+    Minio = require('minio');
 
-var userroutes = require('./router/routes');
-var pool = require('./config/dtabase');
-// var minioClient = require('./src/config/minio');
-// var multer = require('multer');
-var app = express();
+const session = require('express-session');
+const  app = express();
+
+// Trust Proxy
+app.set('trust proxy', true);
+
+// View engine ejs
+app.set('view engine', 'ejs');
+
+// Parsing the body
+app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// Parsing the JSON
+app.use(express.json());
+app.use(bodyParser.json());
 
 // App port
 app.set('port', process.env.PORT || 3000);
@@ -26,52 +36,53 @@ pool.connect(function(error) {
     }
 });
 
-// Trust Proxy
-app.set('trust proxy', true);
-
-// // Check connection to minio
-// minioClient.bucketExists('testing', function(err, exists) {
-//     if (err) {
-//         return console.log(err)
-//     }
-//     if (exists) {
-//         console.log('Bucket exists.')
-//     } else {
-//         console.log('Bucket does not exist.')
-//     }
-// })
-
-
 app.use(express.json());
 
-// test
-app.get('/', function(req, res) {
-    res.json ({ status: "Sukses"})
-});
+//Middleware
+//Express session
+app.use(
+    session({
+        secret: 'tribi',
+        resave: false,
+        saveUninitialized: true,
+        cookie: { maxAge: 3600000 } // 1 jam
+    })
+);
 
-// app.get('/api/getall', function(req, res) {
-//    pool.query('SELECT * FROM users', function(error, results, fields) {
-//        if (error) {
-//            console.log(error);
-//        } else {
-//            res.status(200).json({message: 'Users successfully', data: results.rows})
-//        }
-//    });
-// });
+app.get('/test', function(req, res, next) {
+    console.log(req.session)
+res.send('Hello World')
+})
 
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
 
-// User routes
-app.use('/api', userroutes); // 
-app.use('/api/signup', userroutes); // createuser
-app.use('/api/signin', userroutes); // loginuser
-// app.use('/api/getall', userroutes); //getuser
-app.use('/api/edit/:id', userroutes); // edituser
-app.use('/api/user', userroutes); // getuserbyid
-app.use('/api/get', userroutes); // getusercontri
+app.use('/api/signup/contributor', userroutes); // usercontri
+app.use('/api/signin/contributor', userroutes); // loginusercontri
+app.use('/api/getall/contributor', userroutes); // getusercontri
+app.use('/api/edit/contributor/:id', userroutes); // editusercontri
+app.use('/api/signout', userroutes); // logoutuser')
+app.use('/api/checkout', userroutes); // checkoutuser
+app.use('api/delete/:id', userroutes); // deleteuser
+
 app.use('/api/upload/video', userroutes); // uploadvideo
-
+app.use('/api/get/article', userroutes); // getArticle
+app.use('/api/article/:id', userroutes); // getArticleById
+app.use('/api/addfav/:id', userroutes); // addArticle
+app.use('/api/addfav', userroutes); // addArticle
+app.use('/api/getfav', userroutes); // getFavorite
+app.use('/ap/get/video', userroutes); // getVideo')
+app.use('/api/result', userroutes); // result')
+app.use('/api/ranking/user', userroutes); // rankinguser'
 
 // Creating Server
 http.createServer(app).listen(app.get('port'), function() {
     console.log('Listening to ' + app.get('port'));
 });
+
+
+
+
+
+
