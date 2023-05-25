@@ -3,7 +3,6 @@ const multer = require('multer');
 const { usercontributor } = require('./UserContributor');
 
 
-
 // usercontributor login upload video
 const uploadVideo = (req, res) => {
     // Check if user is logged in
@@ -57,7 +56,22 @@ const ranking = (req, res) => {
     });
 };
 
+// History upload usercontributor
+const history = (req, res) => {
+    pool.query('SELECT * FROM video WHERE usercontributor_id = $1', [req.session.user.id], (error, results) => {
+        if (error) throw error;
+        res.status(200).json(results.rows);
+    });
+};
+
+// History delete upload usercontributor
+const deleteHistory = (req, res) => {
+    pool.query('DELETE FROM video WHERE video_id = $1', [req.params.id], (error, results) => {
+        if (error) throw error;
+        res.status(200).json({message: 'Success Delete History'});;
+    });
+};
 
 module.exports = {
-    uploadVideo, getVideo, result, ranking
+    uploadVideo, getVideo, result, ranking, history, deleteHistory
 };
