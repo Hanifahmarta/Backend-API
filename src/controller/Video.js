@@ -28,19 +28,6 @@ const uploadVideo = (req, res) => {
     }
 };
 
-// // configurasi multer for upload video
-// const storage = multer.diskStorage({
-//     destination: function(req, file, cb) {
-//         cb(null, './src/public/uploads');
-//     },
-//     filename: function(req, file, cb) {
-//         cb(null, file.originalname);
-//     }
-// });
-
-// const upload = multer({storage: storage});
-
-
 // coutn video from upload video and user login
 const result = (req, res) => {
     pool.query('SELECT usercontributor.id, usercontributor.username, COUNT(video.video_id) AS video_count FROM usercontributor LEFT JOIN video ON usercontributor.id = video.usercontributor_id GROUP BY usercontributor.id, usercontributor.username') 
@@ -52,12 +39,6 @@ const result = (req, res) => {
     });
 };
 
-
-
-
-// (bener untk perhitungan) SELECT usercontributor.id, usercontributor.username, COUNT(video.video_id) AS video_count FROM usercontributor LEFT JOIN video ON usercontributor.id = video.usercontributor_id GROUP BY usercontributor.id, usercontributor.username;
-// (bener untk urutkan terbnyak) SELECT usercontributor.id, usercontributor.username, COUNT(video.video_id) AS video_count FROM usercontributor LEFT JOIN video ON usercontributor.id = video.usercontributor_id GROUP BY usercontributor.id, usercontributor.username ORDER BY video_count DESC;
-
 // Get usercontributor video list
 const getVideo = (req, res) => {
     pool.query('SELECT * FROM video', (error, results) => {
@@ -66,29 +47,17 @@ const getVideo = (req, res) => {
     });
 };
 
-// const getVideo = (req, res) => {
-//     // check if the user is logged in
-//     if (req.session.user) {
-//         // Get usercontributor video list
-//         pool.query('SELECT user_conributor.* FROM user_contributor', [req.session.user, req.body], (error, results) => {
+const ranking = (req, res) => {
+    pool.query('SELECT usercontributor.id, usercontributor.username, COUNT(video.video_id) AS video_count FROM usercontributor LEFT JOIN video ON usercontributor.id = video.usercontributor_id GROUP BY usercontributor.id, usercontributor.username ORDER BY video_count DESC;')
+    .then((result) => {
+        res.status(200).json(result.rows);
+    })
+    .catch((err) => {
+        res.status(400).json(err);
+    });
+};
 
-
-// const getVideo = (req, res) => {
-//     // check if the user is logged in
-//     if (req.session.user) {
-//         // Get usercontributor video list
-//         pool.query('SELECT * FROM user_contributor', [req.session.user, req.body], (error, results) => {
-//             if (error) {
-//                 res.json({"status": 400, reason: error.code});
-//             } else {
-//                 res.json({"status": 200, "message": "user sukses", data: results.rows})
-//             }
-//         });
-//     } else {
-//         res.status(401).json({message: 'You are not logged in'});
-//     }
-// }
 
 module.exports = {
-    uploadVideo, getVideo, result
+    uploadVideo, getVideo, result, ranking
 };
