@@ -30,25 +30,6 @@ const usercontributor = (req, res) => {
     });
 }
 
-// // Register user contributor
-// const usercontributor = (req, res) => {
-//     const { username, email, password, nomorhp, photo} = req.body
-//     //check if email already exists
-//     pool.query('SELECT * FROM usercontributor WHERE email = $1', [email], (error, results) => {
-//         if  (results.rows.length > 0) {
-//             res.status(409).json({message: 'Email already exists'})
-//         } else {
-//             // Hash the password
-//             bcrypt.hash(password, 10, function(err, hash) {
-//             //insert user
-//             pool.query('INSERT INTO usercontributor (username, email, password, nomorhp, photo) VALUES ($1, $2, $3, $4, $5)', [username, email, hash, nomorhp, photo], (error, results) => {
-//                 if (error) throw error;
-//                 res.status(201).json({message: 'User created successfully', data: req.body})
-//             });
-//         });
-//         }
-//     });
-// }
 
 // Login user contributor
 const loginusercontributor = (req, res) => {
@@ -125,7 +106,6 @@ const deleteusercontributor = (req, res) => {
         res.status(200).json({message: 'User deleted successfully'})
     });
 }
-
 
 
 module.exports = {
