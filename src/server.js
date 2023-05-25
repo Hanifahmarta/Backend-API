@@ -7,7 +7,10 @@ var express = require('express');
     Minio = require('minio');
 
 const session = require('express-session');
-const  app = express();
+const app = express();
+const userroutes = require('./src/router/routes');
+const pool = require('./src/config/dtabase');
+
 
 // Trust Proxy
 app.set('trust proxy', true);
