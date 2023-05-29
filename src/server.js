@@ -8,8 +8,8 @@ var express = require('express');
 
 const session = require('express-session');
 const app = express();
-const userroutes = require('./src/router/routes');
-const pool = require('./src/config/dtabase');
+const userroutes = require('./router/routes');
+const pool = require('./config/dtabase');
 
 
 // Trust Proxy
@@ -61,31 +61,26 @@ res.send('Hello World')
 app.use(passport.initialize());
 app.use(passport.session());
 
+// User Contributor routes
+app.use('/api', userroutes); //
 app.use('/api/signup/contributor', userroutes); // usercontri
 app.use('/api/signin/contributor', userroutes); // loginusercontri
+app.use('/api/checkuser', usercontri.checkuser);
 app.use('/api/getall/contributor', userroutes); // getusercontri
 app.use('/api/edit/contributor/:id', userroutes); // editusercontri
 app.use('/api/signout', userroutes); // logoutuser')
 app.use('/api/checkout', userroutes); // checkoutuser
-app.use('api/delete/:id', userroutes); // deleteuser
-
+app.use('/api/delete/:id', userroutes); // deleteuser
 app.use('/api/upload/video', userroutes); // uploadvideo
-app.use('/api/get/article', userroutes); // getArticle
-app.use('/api/article/:id', userroutes); // getArticleById
-app.use('/api/addfav/:id', userroutes); // addArticle
-app.use('/api/addfav', userroutes); // addArticle
-app.use('/api/getfav', userroutes); // getFavorite
-app.use('/ap/get/video', userroutes); // getVideo')
+app.use('/ap/get/video', userroutes); // getVideo
 app.use('/api/result', userroutes); // result')
-app.use('/api/ranking/user', userroutes); // rankinguser'
+app.use('/api/ranking/user', userroutes); // rankinguser
+app.use('/api/history/user', userroutes); // historyuser
+app.use('/api/delete/upload/:id', userroutes); // deleteuser
+app.use('/api/upload/image', userroutes); // uploadimage
+app.use('/api/upload/videos', userroutes); // uploadvideo
 
 // Creating Server
 http.createServer(app).listen(app.get('port'), function() {
     console.log('Listening to ' + app.get('port'));
 });
-
-
-
-
-
-
