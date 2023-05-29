@@ -8,7 +8,6 @@ const uploadVideo = (req, res) => {
     // Check if user is logged in
     if (req.session.user) {
         // Upload video
-        // const { word, video_name, video } = req.body;
         const {video_name, video, word} = req.body;
         const data = { 
             video_name: req.body.video_name,
