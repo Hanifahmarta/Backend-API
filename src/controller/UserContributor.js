@@ -78,7 +78,7 @@ const editusercontributor = (req, res) => {
 
     bcrypt.hash (password, 10, function(err, hash) {
         //update user
-        pool.query('UPDATE usercontributor SET username = $1, email = $2, password = $3, nohp = $4, photo = $5  WHERE id = $6', [username, email, hash, photo, nohp, id], (error, results) => {
+        pool.query('UPDATE usercontributor SET username = $1, email = $2, password = $3, nohp = $4, photo = $5  WHERE id = $6', [username, email, hash, nohp, photo, id], (error, results) => {
             if (error) throw error;
             res.status(200).json({message: 'User updated successfully', data: req.body})
         });
