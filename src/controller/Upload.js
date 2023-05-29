@@ -46,9 +46,6 @@ const uploads = (req, res) => {
     })
 }
 
-
-
-
 module.exports = uploads;
 
 
