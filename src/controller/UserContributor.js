@@ -9,7 +9,7 @@ const usercontributor = (req, res) => {
         username: req.body.username,
         email: req.body.email,
         password: req.body.password,
-        nohp: req.body.nohp
+        nohp: req.body.nohp,
         photo: req.body.photo,
         token: crypto.randomBytes(20).toString('hex'),
     }
