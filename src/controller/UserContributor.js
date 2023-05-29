@@ -42,15 +42,15 @@ const loginusercontributor = (req, res) => {
             bcrypt.compare(password, results.rows[0].password, function(err, result) {
                 if (result) {
                     //save user to session
-                    req.session.user = {
+                    const data = {
                         id: results.rows[0].id,
                         username: results.rows[0].username,
                         email: results.rows[0].email,
                         nohp: results.rows[0].nohp,
                         photo: results.rows[0].photo,
-                    };
-                    req.session.isLoggedIn = true;
-                    res.status(200).json({message: 'Login successful', data: req.body})
+                        token: crypto.randomBytes(20).toString('hex')
+                    }
+                    res.status(200).json({message: 'Login successful', data: data})
                 } else {
                     res.status(400).json({message: 'Incorrect password'})
                 }
@@ -117,6 +117,7 @@ const checksignout = (req, res) => {
 module.exports = {
     usercontributor,
     loginusercontributor,
+    checkuser,
     editusercontributor,
     getusercontributor,
     signoutcontributor,
