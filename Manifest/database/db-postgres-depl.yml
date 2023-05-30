@@ -91,19 +91,4 @@ data:
     # IPv4 local connections:
     local all all trust
     host tribi_db tribi 0.0.0.0/0 trust
----
-apiVersion: v1
-kind: Service
-metadata:
-  namespace: app-tribi
-  name: postgres-service
-  labels:
-    app: postgres
-spec:
-  ports:
-  - port: 5432
-    name: postgres
-  selector:
-    app: postgres
-  type: LoadBalancer
----          
+       
