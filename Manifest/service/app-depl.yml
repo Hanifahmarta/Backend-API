@@ -1,70 +1,14 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  namespace: app-tribi
-  name: tribi-deployment
-  labels:
-    app: tribi-deployment
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: tribi-deployment
-  template:
-   metadata:
-     labels:
-       app: tribi-deployment
-   spec:
-    containers:
-    - name: tribi-deployment
-      image: hanifahmrt/nodeapp:14.15.8
-      imagePullPolicy: IfNotPresent
-      ports:
-      - containerPort: 3000
-      securityContext:
-        runAsUser: 0
-      resources:
-        requests:
-          memory: "64Mi"
-          cpu: "150m"
-        limits:
-          memory: "128Mi"
-          cpu: "200m"
-      env:
-      - name: DB_HOST
-        value: postgres-service.tribi.svc.cluster.local
-      - name: DB_PORT
-        value: "5432"
-      - name: DB_NAME
-        value: tribi_db
-      - name: DB_USER
-        value: tribi_123
-      - name: DB_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: myapp-db-secret
-            key: POSTGRES_PASSWORD
----
-apiVersion: v1
-kind: Secret
-metadata:
-  namespace: app-tribi
-  name: myapp-db-secret
-type: Opaque
-data:
-  POSTGRES_PASSWORD: dHJpYmlhcHAxMjM=   #tribiapp123  
----
 apiVersion: v1
 kind: Service
 metadata:
   namespace: app-tribi
-  name: tribi-service
+  name: postgres-service
   labels:
-    app: tribi-service
+    app: postgres
 spec:
   ports:
-  - port: 3000
-    name: http
+  - port: 5432
+    name: postgres
   selector:
-    app: tribi-deployment
+    app: postgres
   type: LoadBalancer
