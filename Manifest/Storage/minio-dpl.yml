@@ -59,23 +59,20 @@ spec:
         args:
           - minio server /data --console-address :9090
         env:
-        - name: MINIO_ACCESS_KEY
+        - name: MINIO_ROOT_USER
           valueFrom: 
             secretKeyRef:
               name: minio-secret
-              key: accesskey
-        - name: MINIO_SECRET_KEY
+              key: rootkey
+        - name: MINIO_ROOT_PASSWORD
           valueFrom: 
             secretKeyRef:
               name: minio-secret
-              key: secretkey
+              key: rootkey
       volumes:
       - name: data
         persistentVolumeClaim:
           claimName: minio-pv-claim
-      - name: minio-secret
-        secret:
-          secretName: minio-secret
       restartPolicy: Always
 ---
 #Deploy a Secret user for MinIO
@@ -88,8 +85,7 @@ metadata:
     app: minio
 type: Opaque
 data:
-  accesskey: eGpVUTNEd1JONExlcGJhSA== #xjUQ3DwRN4LepbaH
-  secretkey: TlFUQXJsZHVucHZBV1pKaFpPcmFyQWR2ampwak5YS2M= #NQTArldunpvAWZJhZOrarAdvjjpjNXKc
+  rootkey: bWluaW9hZG1pbgo= #minioadmin
 ---
 #Deploy a Service for MinIO
 apiVersion: v1
@@ -109,113 +105,3 @@ spec:
   selector:
     app: minio
 ---
-//b
-// versi ke 3
-
-# # Deploy a new Deployment for the MinIO Pod
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   namespace: miniostorage
-#   name: minioserver
-#   labels:
-#     app: minioserver
-# spec:
-#   replicas: 1
-#   selector:
-#     matchLabels:
-#       app: minioserver
-#   template:
-#     metadata:
-#       labels:
-#         app: minioserver
-#     spec:
-#       containers:
-#       - name: minio
-#         image: quay.io/minio/minio:latest
-#         imagePullPolicy: IfNotPresent
-#         livenessProbe:
-#           httpGet:
-#             path: /minio/health/live
-#             port: 9000
-#           initialDelaySeconds: 5
-#           timeoutSeconds: 1
-#         readinessProbe:
-#           httpGet:
-#             path: /minio/health/ready
-#             port: 9000
-#           initialDelaySeconds: 5
-#           timeoutSeconds: 1
-#         resources:
-#           requests:
-#             memory: "150Mi"
-#             cpu: "150m"
-#           limits:
-#             memory: "250Mi"
-#             cpu: "200m"
-#         ports:
-#         - containerPort: 9000
-#           name: minio
-#         volumeMounts:
-#         - name: data
-#           mountPath: /var/lib/minio/data
-#         command:
-#           - /bin/bash
-#           - -c
-#         args:
-#           - minio server /data --console-address :9090
-#         env:
-#         - name: MINIO_ACCESS_KEY
-#           valueFrom:
-#             secretKeyRef:
-#               name: minio-secret
-#               key: accesskey
-#         - name: MINIO_SECRET_KEY
-#           valueFrom:
-#             secretKeyRef:
-#               name: minio-secret
-#               key: secretkey
-#       volumes:
-#       - name: data
-#         persistentVolumeClaim:
-#           claimName: minio-pv-claim
-#       restartPolicy: Always
-# ---
-# #Deploy a Secret user for MinIO
-# apiVersion: v1
-# kind: Secret
-# metadata:
-#   namespace: miniostorage
-#   name: minio-secret
-#   labels:
-#     heritage: minio
-# type: Opaque
-# data:
-#   accesskey: eGpVUTNEd1JONExlcGJhSA== #xjUQ3DwRN4LepbaH
-#   secretkey: TlFUQXJsZHVucHZBV1pKaFpPcmFyQWR2ampwak5YS2M= #NQTArldunpvAWZJhZOrarAdvjjpjNXKc
-# ---
-# # Deploy service account for MinIO
-# apiVersion: v1
-# kind: ServiceAccount
-# metadata:
-#   namespace: miniostorage
-#   name: minio-account
-#   labels:
-#     heritage: minio
-# ---
-# # Deploy a new Service for the MinIO Pod
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   namespace: miniostorage
-#   name: minio-service
-#   labels:
-#     heritage: minio
-# spec:
-#   type: LoadBalancer
-#   selector:
-#     app: minioserver
-#   ports:
-#   - name: http-minio
-#     port: 9090
-    
