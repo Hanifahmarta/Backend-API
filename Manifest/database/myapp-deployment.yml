@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: tribi
+  name: myapp-deployment
+  labels:
+    app: myapp-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapp-deployment
+  template:
+   metadata:
+     labels:
+       app: myapp-deployment
+   spec:
+    containers:
+    - name: myapp-deployment
+      image: hanifahmrt/nodeapp:14.15.8
+      imagePullPolicy: IfNotPresent
+      ports:
+      - containerPort: 3000
+      securityContext:
+        runAsUser: 0
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "150m"
+        limits:
+          memory: "128Mi"
+          cpu: "200m"
+      env:
+      - name: DB_HOST
+        value: postgres-service.tribi.svc.cluster.local
+      - name: DB_PORT
+        value: "5432"
+      - name: DB_NAME
+        value: tribi_db
+      - name: DB_USER
+        value: tribi
+      - name: DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: myapp-db-secret
+            key: POSTGRES_PASSWORD
+      - name: MINIO_HOST
+        value: s3.tribi.adaptivenetlab.site
+      - name: MINIO_ACCESS_KEY
+        value: SWL6n5mQGrfTjPeG
+      - name: MINIO_SECRET_KEY
+        value: ZoWFTtjWz6ory3porafqbTRusMwATeH0
+      - name: MINIO_BUCKET
+        value: testing
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: tribi
+  name: myapp-db-secret
+type: Opaque
+data:
+  POSTGRES_PASSWORD: dHJpYmlhcHAxMjM=   #tribiapp123  
