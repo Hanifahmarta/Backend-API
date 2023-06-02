@@ -30,5 +30,11 @@ router.get('/history/user', video.history);
 router.delete('/delete/upload/:id', video.deleteHistory);
 router.post('/upload/image', upload.single('photo'), uploads);
 router.post('/upload/videos', upload.single('video'), uploads);
+router.get('/get/article', article.getArticle);
+router.get('/article/:id', article.getArticleById);
+router.post('/addfav/:id', article.addArticle);
+router.get('/getfav', article.getFavorite);
+router.delete('/delete/article/:id', article.removeFavorite);
+
 
 module.exports = router;
