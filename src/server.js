@@ -79,6 +79,11 @@ app.use('/api/history/user', userroutes); // historyuser
 app.use('/api/delete/upload/:id', userroutes); // deleteuser
 app.use('/api/upload/image', userroutes); // uploadimage
 app.use('/api/upload/videos', userroutes); // uploadvideo
+app.use('/api/get/article', userroutes); // getArticle
+app.use('/api/article/:id', userroutes); // getArticleById
+app.use('/api/addfav/:id', userroutes); // addArticle
+app.use('/api/getfav', userroutes); // getFavorite
+app.use('/api/delete/article/:id', userroutes); // removeFavorite
 
 // Creating Server
 http.createServer(app).listen(app.get('port'), function() {
