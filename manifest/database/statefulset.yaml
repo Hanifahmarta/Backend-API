@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-statefulset
+  namespace: noval
+  labels:
+    app: postgres
+spec:
+  serviceName: "postgres"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:12
+        envFrom:
+        - configMapRef:
+            name: postgres-configuration
+        env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: POSTGRES_PASSWORD
+        ports:
+        - containerPort: 5432
+          name: postgresdb
+        securityContext:
+          runAsUser: 0
+        volumeMounts:
+        - name: pv-data
+          mountPath: /var/lib/postgresql
+        # - name: postgres-vol
+        #   mountPath: /var/lib/postgresql/postgresql.conf
+        #   subPath: postgresql.conf
+        - name: postgres-vol
+          mountPath: /etc/postgresql/pg_hba.conf
+          subPath: pg_hba.conf
+        args:
+          # - "-c"
+          # - "config_file=/etc/postgresql/postgresql.conf"
+          - "-c"
+          - "hba_file=/etc/postgresql/pg_hba.conf"
+      volumes:
+        - name: postgres-vol
+          configMap:
+            name: postgres-configuration
+  volumeClaimTemplates:
+  - metadata:
+      name: pv-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 2Gi
+      storageClassName: "longhorn"

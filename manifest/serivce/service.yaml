@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: noval
+  name: service
+  labels:
+    app: martha-app
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 3000
+    name: http
+  selector:
+    app: martha-app

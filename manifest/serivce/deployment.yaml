@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: noval
+  name: martha-app
+  labels:
+    app: martha-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: martha-app
+  template:
+    metadata:
+      labels:
+        app: martha-app
+    spec:
+      containers:
+      - name: martha-app
+        image: harbor.capstone.adaptivenetworklab.org/temp/martha-app@sha256:092ae1fd05518197761e451a86837e704ab8491692c8425f04369238e5651a38
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        securityContext:
+          runAsUser: 0
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "150m"
+        env:
+        - name: DB_HOST
+          value: postgres-service.noval.svc.caps.adaptivenetworklab.local
+        - name: DB_USER
+          value: martha
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: POSTGRES_PASSWORD
+        - name: DB_NAME
+          value: mydb
+        - name: DB_PORT
+          value: "5432"
+      imagePullSecrets:
+      - name: harbor-registry-secret
