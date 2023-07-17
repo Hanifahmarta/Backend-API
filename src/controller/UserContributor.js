@@ -1,6 +1,8 @@
 const pool = require('../config/dtabase');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+const mailer = require('nodemailer');
+const otpGenerator = require('otp-generator');
 
 
 //Regiter user contributor token
@@ -12,6 +14,7 @@ const usercontributor = (req, res) => {
         nohp: req.body.nohp,
         photo: req.body.photo,
         token: crypto.randomBytes(20).toString('hex'),
+        otpCode: otpGenerator.generate(4, { digits: true, alphabets: true, upperCase: false, specialChars: false })
     }
     //check if email already exists
     pool.query('SELECT * FROM usercontributor WHERE email = $1', [data.email], (error, results) => {
@@ -21,9 +24,31 @@ const usercontributor = (req, res) => {
             // Hash the password
             bcrypt.hash(data.password, 10, function(err, hash) {
             //insert user
-            pool.query('INSERT INTO usercontributor (username, email, password, nohp, photo, token) VALUES ($1, $2, $3, $4, $5, $6)', [data.username, data.email, hash, data.nohp, data.photo, data.token], (error, results) => {
+            pool.query('INSERT INTO usercontributor (username, email, password, nohp, photo, token, kodeotp) VALUES ($1, $2, $3, $4, $5, $6, $7)', [data.username, data.email, hash, data.nohp, data.photo, data.token, data.otpCode], (error, results) => {
                 if (error) throw error;
-                res.status(201).json({message: 'User created successfully', data: req.data})
+                // Send email to user
+                const smtpProtocol = mailer.createTransport({
+                    service: "gmail",
+                    auth: {
+                        user: "apptribi@gmail.com",
+                        pass: "cshqgilkharzxovz"
+                    }
+                });
+                const mailOption = {
+                    from: "apptribi@gmail.com",
+                    to: data.email,
+                    subject: "Account Verification",
+                    text: `Your verification code is: ${data.otpCode}`
+                };
+                smtpProtocol.sendMail(mailOption, function(err, response){
+                    if(err) {
+                        console.log(err);
+                    } else {
+                        console.log('Verification email sent to: ' + data.email);
+                    }
+                    smtpProtocol.close();
+                });
+                res.status(201).json({message: 'User created successfully', data: req.body, otpCode: data.otpCode})
             });
         });
         }
@@ -42,15 +67,16 @@ const loginusercontributor = (req, res) => {
             bcrypt.compare(password, results.rows[0].password, function(err, result) {
                 if (result) {
                     //save user to session
-                    const data = {
+                    req.session.user = {
                         id: results.rows[0].id,
                         username: results.rows[0].username,
                         email: results.rows[0].email,
                         nohp: results.rows[0].nohp,
                         photo: results.rows[0].photo,
-                        token: crypto.randomBytes(20).toString('hex')
+                        token: results.rows[0].token,
+                        otpCode: results.rows[0].kodeotp
                     }
-                    res.status(200).json({message: 'Login successful', data: data})
+                    res.status(200).json({message: 'Login successful', data: req.session.user})
                 } else {
                     res.status(400).json({message: 'Incorrect password'})
                 }
@@ -60,6 +86,16 @@ const loginusercontributor = (req, res) => {
         }
     });
 }
+
+// User Authentication using token from user login
+const userauth = (req, res) => {
+    // Check if user is authenticated
+    if (req.session.user && req.session.user.token === req.body.token) {
+        // User is authenticated
+        res.status(200).json({ message: 'User authenticated', user: req.session.user });
+    }
+}
+
 
 //Check if the user is logged in with session
 const checkuser = (req, res) => {
@@ -112,15 +148,34 @@ const checksignout = (req, res) => {
     } else {
         res.send('User already logout')
     }
-};
+}
+
+// Upload photo
+const updatephoto = (req, res) => {
+    pool.query('UPDATE usercontributor SET photo = $1 WHERE id = $2', [req.body.photo, req.session.user], (error, results) => {
+        if (error) throw error;
+        res.status(201).json({message: 'Photo uploaded successfully', data: results.rows })
+    });
+}
+
+//upload video
+const updatevideo = (req, res) => {
+    pool.query('UPDATE usercontributor SET video = $1 WHERE id = $2', [req.body.video, req.session.user], (error, results) => {
+        if (error) throw error;
+        res.status(201).json({message: 'video uploaded successfully', data: results.rows })
+    });
+}
 
 module.exports = {
     usercontributor,
     loginusercontributor,
     checkuser,
+    userauth,
     editusercontributor,
     getusercontributor,
     signoutcontributor,
     deleteusercontributor,
-    checksignout
+    checksignout,
+    updatephoto,
+    updatevideo
 }
