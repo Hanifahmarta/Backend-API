@@ -29,7 +29,6 @@ app.use(bodyParser.json());
 // App port
 app.set('port', process.env.PORT || 3000);
 
-
 // Check connection to database
 pool.connect(function(error) {
     if (error) {
@@ -65,25 +64,25 @@ app.use(passport.session());
 app.use('/api', userroutes); //
 app.use('/api/signup/contributor', userroutes); // usercontri
 app.use('/api/signin/contributor', userroutes); // loginusercontri
-app.use('/api/checkuser', usercontri.checkuser);
+app.use('api/get/auth',userroutes); // userauth
+app.use('/api/checkuser', userroutes); //checkuser
 app.use('/api/getall/contributor', userroutes); // getusercontri
 app.use('/api/edit/contributor/:id', userroutes); // editusercontri
 app.use('/api/signout', userroutes); // logoutuser')
 app.use('/api/checkout', userroutes); // checkoutuser
 app.use('/api/delete/:id', userroutes); // deleteuser
-app.use('/api/upload/video', userroutes); // uploadvideo
-app.use('/ap/get/video', userroutes); // getVideo
+app.use('/api/upload/videos', userroutes); // uploadimage
+app.use('/api/uplod/profile', userroutes); // uploadimage
+app.use('/api/get/video/name', userroutes); // getVideo
 app.use('/api/result', userroutes); // result')
 app.use('/api/ranking/user', userroutes); // rankinguser
 app.use('/api/history/user', userroutes); // historyuser
 app.use('/api/delete/upload/:id', userroutes); // deleteuser
-app.use('/api/upload/image', userroutes); // uploadimage
-app.use('/api/upload/videos', userroutes); // uploadvideo
 app.use('/api/get/article', userroutes); // getArticle
 app.use('/api/article/:id', userroutes); // getArticleById
 app.use('/api/addfav/:id', userroutes); // addArticle
-app.use('/api/getfav', userroutes); // getFavorite
-app.use('/api/delete/article/:id', userroutes); // removeFavorite
+app.use('/api/update/photo/:id', userroutes); // uploadimage
+app.use('/api/update/video/:id', userroutes); // uploadimage
 
 // Creating Server
 http.createServer(app).listen(app.get('port'), function() {
