@@ -5,14 +5,14 @@ const mailer = require('nodemailer');
 const otpGenerator = require('otp-generator');
 
 
-//Regiter user contributor token
+
+//Regiter user contributor 
 const usercontributor = (req, res) => {
-    const data = {
+    const data = { 
         username: req.body.username,
         email: req.body.email,
         password: req.body.password,
-        nohp: req.body.nohp,
-        photo: req.body.photo,
+        nomorhp: req.body.nomorhp,
         token: crypto.randomBytes(20).toString('hex'),
         otpCode: otpGenerator.generate(4, { digits: true, alphabets: true, upperCase: false, specialChars: false })
     }
@@ -24,7 +24,8 @@ const usercontributor = (req, res) => {
             // Hash the password
             bcrypt.hash(data.password, 10, function(err, hash) {
             //insert user
-            pool.query('INSERT INTO usercontributor (username, email, password, nohp, photo, token, kodeotp) VALUES ($1, $2, $3, $4, $5, $6, $7)', [data.username, data.email, hash, data.nohp, data.photo, data.token, data.otpCode], (error, results) => {
+            pool.query('INSERT INTO usercontributor (username, email, password, nomorhp, token, kodeotp) VALUES ($1, $2, $3, $4, $5, $6)', [data.username, data.email, hash, data.nomorhp, data.token, data.otpCode], (error, results) => {
+                // pool.query('INSERT INTO usercontributor (username, email, password, nomorhp, token) VALUES ($1, $2, $3, $4, $5)', [data.username, data.email, hash, data.nomorhp, data.token], (error, results) => { 
                 if (error) throw error;
                 // Send email to user
                 const smtpProtocol = mailer.createTransport({
@@ -33,12 +34,13 @@ const usercontributor = (req, res) => {
                         user: "apptribi@gmail.com",
                         pass: "cshqgilkharzxovz"
                     }
-                });
+                });        
                 const mailOption = {
                     from: "apptribi@gmail.com",
                     to: data.email,
                     subject: "Account Verification",
                     text: `Your verification code is: ${data.otpCode}`
+                    // text: `Your verification code is: ${otpCode}`
                 };
                 smtpProtocol.sendMail(mailOption, function(err, response){
                     if(err) {
@@ -54,7 +56,6 @@ const usercontributor = (req, res) => {
         }
     });
 }
-
 
 // Login user contributor
 const loginusercontributor = (req, res) => {
