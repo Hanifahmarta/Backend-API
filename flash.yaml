@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: app-tribi
+  name: flash-deployment
+  labels:
+    app: flash-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flash-deployment
+  template:
+   metadata:
+     labels:
+       app: flash-deployment
+   spec:
+    containers:
+    - name: flash-deployment
+      image: hanifahmrt/flash.ml:3.9
+      imagePullPolicy: IfNotPresent
+      ports:
+      - containerPort: 80
+      securityContext:
+        runAsUser: 0
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "150m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: tribi
+  name: ml-service
+  labels:
+    app: flash
+spec:
+  ports:
+  - port: 5000
+    name: flash
+  selector:
+    app: flash
+  type: LoadBalancer
