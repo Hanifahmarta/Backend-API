@@ -1,0 +1,30 @@
+filebeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: true
+
+#------------------------------ Filebeat inputs -------------------------#
+filebeat.inputs:
+- type: filestream
+  enabled: true
+  id: nginx-marta
+  paths:
+    # - /var/log/nginx/access.log
+      - /var/log/nginx/custom.access.log.1
+  fields:
+    log_type: nginx
+    server: reverse-marta
+#-------------------------- Logstash Output ------------------------------#
+output.logstash:
+  hosts: ["logstash:5044"]
+
+#-----------LOGGING-----------#
+
+logging:
+  level: error
+  to_files: true
+  to_syslog: false
+  files:
+    path: /var/log/filebeat
+    name: filebeat.log
+    keepfiles: 7
